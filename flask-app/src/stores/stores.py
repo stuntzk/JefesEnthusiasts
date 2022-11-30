@@ -3,14 +3,12 @@ import json
 from src import db
 
 
-customers = Blueprint('customers', __name__)
+stores = Blueprint('stores', __name__)
 
-# Get all customers from the DB
-@customers.route('/customers', methods=['GET'])
-def get_customers():
+@stores.route('/storeNames', methods=['GET'])
+def get_storeNames():
     cursor = db.get_db().cursor()
-    cursor.execute('select customerNumber, customerName,\
-        creditLimit from customers')
+    cursor.execute('select StoreName, StoreId from Store')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -21,11 +19,11 @@ def get_customers():
     the_response.mimetype = 'application/json'
     return the_response
 
-# Get customer detail for customer with particular userID
-@customers.route('/customers/<userID>', methods=['GET'])
-def get_customer(userID):
+# returns the ingredients available at the store asked
+@stores.route('/ingr/<storeID>', methods=['GET'])
+def get_ingredients(storeID):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from customers where customerNumber = {0}'.format(userID))
+    cursor.execute('select IngrName, Upcharge from Ingredient where CurrQuantity > 0 and StoreId = {0}'.format(storeID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -35,6 +33,3 @@ def get_customer(userID):
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
-
-
-
