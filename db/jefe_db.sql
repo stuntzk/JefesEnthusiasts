@@ -252,7 +252,8 @@ INSERT INTO Ingredient
 VALUES
     (1111, 'White Rice', 103.54, 1.00, 'Hot', 5, 1),
     (1112, 'Grilled Chicken', 435.87, 2.50, 'Protein', 10, 2),
-    (1232, 'Chipotle Mayo', 90.45, 0.00, 'Sauce', 12, 2);
+    (1232, 'Chipotle Mayo', 90.45, 0.00, 'Sauce', 12, 2),
+    (1232, 'Chipotle Mayo2', 90.45, 0.00, 'Sauce', 12, 2);
 
 INSERT INTO ProductIngredient
     (ProductId, IngredientId, Quantity)
