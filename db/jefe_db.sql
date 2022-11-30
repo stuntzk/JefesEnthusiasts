@@ -117,8 +117,10 @@ CREATE TABLE Shift (
     ShiftStart TIME,
     ShiftEnd TIME,
     ShiftHours INT,
+    StoreWorked INT(1) NOT NULL,
     PRIMARY KEY(EmpId, ShiftDate, ShiftStart, ShiftEnd),
-    CONSTRAINT fk_9 FOREIGN KEY (EmpId) REFERENCES Employee (EmpId) ON UPDATE cascade ON DELETE restrict
+    CONSTRAINT fk_9 FOREIGN KEY (EmpId) REFERENCES Employee (EmpId) ON UPDATE cascade ON DELETE restrict,
+    CONSTRAINT fk_15 FOREIGN KEY (StoreWorked) REFERENCES Store (StoreId) ON UPDATE cascade ON DELETE restrict
 );
 
 CREATE TABLE FoodType (
@@ -226,10 +228,10 @@ VALUES
 
     
 INSERT INTO Shift
-    (EmpId, ShiftDate, ShiftStart, ShiftEnd, ShiftHours)
+    (EmpId, ShiftDate, ShiftStart, ShiftEnd, ShiftHours, StoreWorked)
 VALUES
-    (111, '2022-11-10', '08:00:00', '12:00:00', 4),
-    (435, '2022-11-10', '15:00:00', '20:00:00', 5);
+    (111, '2022-11-10', '08:00:00', '12:00:00', 4, 3),
+    (435, '2022-11-10', '15:00:00', '20:00:00', 5, 2);
 
 INSERT INTO FoodType
     (TypeId, TypeName, BasePrice)
