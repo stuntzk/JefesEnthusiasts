@@ -5,10 +5,11 @@ from src import db
 
 stores = Blueprint('stores', __name__)
 
+# returns all the stores with their id and name
 @stores.route('/storeNames', methods=['GET'])
 def get_storeNames():
     cursor = db.get_db().cursor()
-    cursor.execute('select StoreName, StoreId from Store')
+    cursor.execute('select StoreId, StoreName from Store')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
