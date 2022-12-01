@@ -24,7 +24,7 @@ def get_storeNames():
 @stores.route('/ingr/<storeID>', methods=['GET'])
 def get_ingredients(storeID):
     cursor = db.get_db().cursor()
-    cursor.execute('select IngrName, Upcharge from Ingredient where CurrQuantity > 0 and StoreId = {0}'.format(storeID))
+    cursor.execute('select * from Ingredient where CurrQuantity > 0 and StoreId = {0}'.format(storeID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -35,10 +35,11 @@ def get_ingredients(storeID):
     the_response.mimetype = 'application/json'
     return the_response
 
-@stores.route('/emp', methods=['GET'])
-def get_emps():
+# returns the store name with the specific storeID
+@stores.route('/<storeID>', methods=['GET'])
+def get_store(storeID):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from Employee')
+    cursor.execute('select StoreName from Store where StoreId = {0}'.format(storeID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
