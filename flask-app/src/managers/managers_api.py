@@ -2,30 +2,13 @@ from flask import Blueprint, request, jsonify, make_response
 import json
 from src import db
 
+managers = Blueprint('managers', __name__)
 
-customers = Blueprint('customers', __name__)
+@managers.route('/managers')
+def get_all_managers():
 
-# Get all customers from the DB
-@customers.route('/customers', methods=['GET'])
-def get_customers():
     cursor = db.get_db().cursor()
-    cursor.execute('select customerNumber, customerName,\
-        creditLimit from customers')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
-
-# Get customer detail for customer with particular userID
-@customers.route('/customers/<userID>')
-def get_customer(userID):
-    cursor = db.get_db().cursor()
-    cursor.execute('select * from customers where customerNumber = {0}'.format(userID))
+    cursor.execute('select FirstName from Employee where EmpId = ManagerId')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -37,4 +20,16 @@ def get_customer(userID):
     return the_response
 
 
-
+@managers.route('/timeMake')
+def get_all_times():
+    cursor = db.get_db().cursor()
+    cursor.execute('select * from Orders')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
