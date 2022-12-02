@@ -21,15 +21,19 @@ def get_all_managers():
     return the_response
 
 
-@managers.route('/timeMake')
+@managers.route('/timeMake', methods=['GET'])
 def get_all_times():
     cursor = db.get_db().cursor()
-    cursor.execute('select hour, sec_to_time(avg(totalTime)) as avgTimeToMakeHr\
-    from (select OrderDate, EXTRACT(HOUR from TimeOrdered) as hour, totalTime\
-    from (SELECT OrderDate, TimeOrdered, TIME_TO_SEC(TimeToMake) as totalTime\
-    ROM Orders) as second) as third\
-    group by hour\
-    ORDER BY hour')
+    query = '''
+        select hour as x, avg(totalTime)/60 as y
+        from (select OrderDate, EXTRACT(HOUR from TimeOrdered) as hour, totalTime
+        from (SELECT OrderDate, TimeOrdered, TIME_TO_SEC(TimeToMake) as totalTime
+        FROM Orders) as second) as third
+        group by hour
+        ORDER BY hour;
+    '''
+
+    cursor.execute(query)
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
