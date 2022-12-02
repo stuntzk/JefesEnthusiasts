@@ -24,10 +24,14 @@ def get_all_managers():
 @managers.route('/timeMake')
 def get_all_times():
     cursor = db.get_db().cursor()
-    cursor.execute('select * from Orders')
+    cursor.execute('select hour, sec_to_time(avg(totalTime)) as avgTimeToMakeHr\
+    from (select OrderDate, EXTRACT(HOUR from TimeOrdered) as hour, totalTime\
+    from (SELECT OrderDate, TimeOrdered, TIME_TO_SEC(TimeToMake) as totalTime\
+    ROM Orders) as second) as third\
+    group by hour\
+    ORDER BY hour')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
-    type_data = []
     theData = cursor.fetchall()
     for row in theData:
         rowList = list(row)
@@ -40,7 +44,6 @@ def get_all_times():
     the_response.status_code = 200
     the_response.mimetype = 'application/json'
     return the_response
-    # the_response = make_response(jsonify(json_data))
-    #the_response.status_code = 200
-    #the_response.mimetype = 'application/json'
-    #return the_response
+
+
+
