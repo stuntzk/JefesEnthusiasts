@@ -6,11 +6,10 @@ from src import db
 customers = Blueprint('customers', __name__)
 
 # Get all customers from the DB
-@customers.route('/customers', methods=['GET'])
+@customers.route('/all', methods=['GET'])
 def get_customers():
     cursor = db.get_db().cursor()
-    cursor.execute('select customerNumber, customerName,\
-        creditLimit from customers')
+    cursor.execute('select * from Customer')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -22,10 +21,10 @@ def get_customers():
     return the_response
 
 # Get customer detail for customer with particular userID
-@customers.route('/customers/<userID>')
-def get_customer(userID):
+@customers.route('/<custID>')
+def get_customer(custID):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from customers where customerNumber = {0}'.format(userID))
+    cursor.execute('select * from Customer where CustId = {0}'.format(custID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
