@@ -80,12 +80,12 @@ CREATE TABLE Customer
 CREATE TABLE Orders
 (
     OrderId       INT(5)         NOT NULL,
-    StoreId       INT(1)         NOT NULL,
-    OrderDate     DATE           NOT NULL,
-    TotalPrice    DECIMAL(19, 2) NOT NULL,
-    TimeOrdered   TIME           NOT NULL,
-    TimeCompleted TIME           NOT NULL,
-    TimeToMake    TIME           NOT NULL,
+    StoreId       INT(1)        ,
+    OrderDate     DATE           ,
+    TotalPrice    DECIMAL(19, 2),
+    TimeOrdered   TIME          ,
+    TimeCompleted TIME           ,
+    TimeToMake    TIME           ,
     CustomerId    INT(6)         NOT NULL,
     PRIMARY KEY (OrderId),
     CONSTRAINT fk_5 FOREIGN KEY (CustomerId) REFERENCES Customer (CustId) ON UPDATE cascade ON DELETE restrict,
