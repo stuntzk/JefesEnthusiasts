@@ -37,6 +37,7 @@ def get_customer(custID):
     the_response.mimetype = 'application/json'
     return the_response
 
+# adds a product into the database after the user has it. All of the product ingredients are added individualls
 @customers.route("/product", methods = ['POST'])
 def add_product():
     cursor = db.get_db().cursor()
@@ -56,8 +57,6 @@ def add_product():
         price = price + cursor.fetchone()[0]
     cursor.execute('select max(OrderId) from Orders')
     order = request.form['orderNum']
-    # need to have an order already created for this -- may make it with null values and then replace them upon submit
-
     query = f'INSERT INTO Product(ProductId, Price, OrderId, TypeId) VALUES ({prod}, {price}, {order}, {type})'
     cursor.execute(query)
     db.get_db().commit()
@@ -67,6 +66,7 @@ def add_product():
         db.get_db().commit()
     return f'{price}'
 
+# completes the proper steps after the user places submit on the order (updates the order to have the proper information)
 @customers.route('/submit', methods = ['POST'])
 def update_order():
     cursor = db.get_db().cursor()
@@ -77,10 +77,11 @@ def update_order():
     query = f'select sum(Price) from Product where OrderId = {o}'
     cursor.execute(query)
     price = cursor.fetchone()[0]
-    db_update(store, price, o)
+    db_update_order(store, price, o)
     return 'succes'
 
-def db_update(store, price, orderId):
+# updates the information for each order after the user presses submit
+def db_update_order(store, price, orderId):
     cursor = db.get_db().cursor()
     minutes = random.randint(2,40)
     seconds = random.randint(0,59)
@@ -89,6 +90,7 @@ def db_update(store, price, orderId):
     db.get_db().commit()
     return "hi"
 
+# determines all the orders a single customer has placed
 @customers.route('/orders/<custId>', methods=['GET'])
 def get_orders(custId):
     cursor = db.get_db().cursor()
@@ -103,6 +105,7 @@ def get_orders(custId):
     the_response.mimetype = 'application/json'
     return the_response
 
+# creates a list of all the products
 @customers.route('/product/all', methods=['GET'])
 def get_prod():
     cursor = db.get_db().cursor()
@@ -117,6 +120,7 @@ def get_prod():
     the_response.mimetype = 'application/json'
     return the_response
 
+# determines what the highest order so far is
 @customers.route('/maxOrder', methods =['GET'])
 def get_max():
     cursor = db.get_db().cursor()
@@ -124,6 +128,7 @@ def get_max():
     order = cursor.fetchone()[0] + 1
     return f'{order}'
 
+# adds a new order into the system
 @customers.route('/newOrder', methods =['POST'])
 def new_order():
     cursor = db.get_db().cursor()
@@ -134,3 +139,88 @@ def new_order():
     db.get_db().commit()
     return "hi"
 
+# Get all the products from the database
+@customers.route('/types', methods=['GET'])
+def get_foodTypes():
+    # get a cursor object from the database
+    cursor = db.get_db().cursor()
+
+    # use cursor to query the database for a list of products
+    cursor.execute('select * from FoodType')
+
+    # grab the column headers from the returned data
+    column_headers = [x[0] for x in cursor.description]
+
+    # create an empty dictionary object to use in
+    # putting column headers together with data
+    json_data = []
+
+    # fetch all the data from the cursor
+    theData = cursor.fetchall()
+
+    # for each of the rows, zip the data elements together with
+    # the column headers.
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+
+    return jsonify(json_data)
+
+# returns all the stores with their id and name
+@customers.route('/storeNames', methods=['GET'])
+def get_storeNames():
+    cursor = db.get_db().cursor()
+    cursor.execute('select StoreId, StoreName from Store')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# returns the ingredients available at the store asked
+@customers.route('/ingr/<storeID>', methods=['GET'])
+def get_ingredients(storeID):
+    cursor = db.get_db().cursor()
+    cursor.execute('select * from Ingredient where CurrQuantity > 0 and StoreId = {0}'.format(storeID))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# returns the store name with the specific storeID
+@customers.route('/home/<storeID>', methods=['GET'])
+def get_store(storeID):
+    cursor = db.get_db().cursor()
+    cursor.execute('select StoreName from Store where StoreId = {0}'.format(storeID))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# returns the stores that are in this zip code
+@customers.route('/zip/<zipCode>', methods=['GET'])
+def get_storeInZip(zipCode):
+    cursor = db.get_db().cursor()
+    cursor.execute('select StoreName, StoreStreet, StoreCity, StoreState, StoreZip from Store where StoreZip = {0}'.format(zipCode))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
