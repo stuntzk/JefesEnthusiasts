@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 import json
-import datetime
+import random
 from src import db
 
 
@@ -55,12 +55,9 @@ def add_product():
         cursor.execute(query)
         price = price + cursor.fetchone()[0]
     cursor.execute('select max(OrderId) from Orders')
-    order = cursor.fetchone()[0] + 1
+    order = request.form['orderNum']
     # need to have an order already created for this -- may make it with null values and then replace them upon submit
-    cust = request.form['custId']
-    query = f'INSERT INTO Orders(OrderId, CustomerId) VALUES ({order}, {cust})'
-    cursor.execute(query)
-    db.get_db().commit()
+
     query = f'INSERT INTO Product(ProductId, Price, OrderId, TypeId) VALUES ({prod}, {price}, {order}, {type})'
     cursor.execute(query)
     db.get_db().commit()
@@ -73,27 +70,29 @@ def add_product():
 @customers.route('/submit', methods = ['POST'])
 def update_order():
     cursor = db.get_db().cursor()
-    store = request.form['store']
+    s = request.form['store']
+    store = int(s)
     cursor.execute('select max(OrderId) from Orders')
-    order = cursor.fetchone()[0]
-    query = f'select sum(Price) from Product where OrderId = {order}'
+    o = cursor.fetchone()[0]
+    query = f'select sum(Price) from Product where OrderId = {o}'
     cursor.execute(query)
     price = cursor.fetchone()[0]
-    current = datetime.datetime.now()
-    date = current.date()
-    time = current.time()
-    # update this to have the right time
-    #query = f'UPDATE Orders SET StoreId = {store}, Price = {price}, OrderDate = {date}, TimeOrdered = {time} WHERE OrderId = {order}'
-    #cursor.execute(query)
-    #db.get_db().commit()
-    return f'{date}, {time}'
+    db_update(store, price, o)
+    return 'succes'
 
-
-
-@customers.route('/orders', methods=['GET'])
-def get_orders():
+def db_update(store, price, orderId):
     cursor = db.get_db().cursor()
-    cursor.execute('select OrderId from Orders')
+    minutes = random.randint(2,40)
+    seconds = random.randint(0,59)
+    cookTime = f'00:{minutes}:{seconds}'
+    cursor.execute(f'UPDATE Orders SET StoreId = {store}, TotalPrice = {price}, OrderDate = now(), TimeOrdered = now(), TimeCompleted = now(), TimeToMake = time(0) WHERE OrderId = {orderId}')
+    db.get_db().commit()
+    return "hi"
+
+@customers.route('/orders/<custId>', methods=['GET'])
+def get_orders(custId):
+    cursor = db.get_db().cursor()
+    cursor.execute('select OrderId, StoreId, TotalPrice, OrderDate from Orders where CustomerId = {0}'.format(custId))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
@@ -118,8 +117,20 @@ def get_prod():
     the_response.mimetype = 'application/json'
     return the_response
 
+@customers.route('/maxOrder', methods =['GET'])
+def get_max():
+    cursor = db.get_db().cursor()
+    cursor.execute('select max(OrderId) from Orders')
+    order = cursor.fetchone()[0] + 1
+    return f'{order}'
 
-
-
-
+@customers.route('/newOrder', methods =['POST'])
+def new_order():
+    cursor = db.get_db().cursor()
+    cust = request.form['custId']
+    order = request.form['orderId']
+    query = f'INSERT INTO Orders(OrderId, CustomerId) VALUES ({order}, {cust})'
+    cursor.execute(query)
+    db.get_db().commit()
+    return "hi"
 
