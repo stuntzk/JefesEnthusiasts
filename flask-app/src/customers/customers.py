@@ -37,7 +37,7 @@ def get_customer(custID):
     the_response.mimetype = 'application/json'
     return the_response
 
-# adds a product into the database after the user has it. All of the product ingredients are added individualls
+# adds a product into the database after the user has it. All of the product ingredients are added individuals
 @customers.route("/product", methods = ['POST'])
 def add_product():
     cursor = db.get_db().cursor()
