@@ -120,6 +120,36 @@ def get_prod():
     the_response.mimetype = 'application/json'
     return the_response
 
+# creates a list of all the products with the current orderId
+@customers.route('/product/<ord>', methods=['GET'])
+def get_order_prod(ord):
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT TypeName, Price, ProductId FROM Product NATURAL JOIN FoodType WHERE OrderId = {0}'.format(ord))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# creates a list of all the ingredients with the current productId
+@customers.route('/product/ingr/<prodId>', methods=['GET'])
+def get_prod_ingr(prodId):
+    cursor = db.get_db().cursor()
+    cursor.execute('SELECT IngrName, Quantity, Upcharge FROM Ingredient NATURAL JOIN ProductIngredient WHERE ProductId = {0}'.format(prodId))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
 # determines what the highest order so far is
 @customers.route('/maxOrder', methods =['GET'])
 def get_max():
