@@ -38,6 +38,7 @@ CREATE TABLE Franchise
     PRIMARY KEY (FranchiseId)
 );
 
+
 CREATE TABLE Store
 (
     StoreId        int(1)         NOT NULL,
