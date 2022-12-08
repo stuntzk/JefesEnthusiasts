@@ -66,10 +66,10 @@ def get_franchises():
     the_response.mimetype='application/json'
     return the_response
 
-@investors.route('/<franchID>')
-def get_franchises(franchid):
+@investors.route('/<invId>')
+def get_investor(invId):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from Franchise where FranchiseID = {0}'.format(franchid))
+    cursor.execute('select * from Investor where InvID = {0}'.format(invId))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
