@@ -49,5 +49,19 @@ def get_all_times():
     the_response.mimetype = 'application/json'
     return the_response
 
+@managers.route('/<manID>')
+def get_manager(manID):
+    cursor = db.get_db().cursor()
+    cursor.execute('select * from Employee where EmpId = ManagerId and ManagerId = {0}'.format(manID))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
 
 
