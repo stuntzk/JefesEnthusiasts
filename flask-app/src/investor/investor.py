@@ -69,7 +69,7 @@ def get_franchises():
 @investors.route('/<invId>')
 def get_investor(invId):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from Investor where InvID = {0}'.format(invId))
+    cursor.execute(f'select * from Investor where InvID = {invId}')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
