@@ -83,10 +83,10 @@ def get_investor(invId):
     return the_response
 
 
-@investors.route('/investments', methods=['GET'])
-def get_investments(invid):
+@investors.route('/investments/<invID>', methods=['GET'])
+def get_investments(invId):
     cursor = db.get_db().cursor()
-    cursor.execute('select FranchiseId, InvId, InvStatus, Stake from Investments where InvID = {0}'.format(invid))
+    cursor.execute('select FranchiseId, InvId, InvStatus, Stake from Investments where InvID = {0}'.format(invId))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
