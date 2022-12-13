@@ -39,7 +39,7 @@ def get_investors():
     return the_response
 
 
-# adds an investment into the database after the investor has it
+# adds an investment into the database once the investor is logged in
 @investors.route("/investment", methods=['POST'])
 def add_investment():
     cursor = db.get_db().cursor()
@@ -68,6 +68,7 @@ def get_franchises():
     return the_response
 
 
+#returns all investors according to Investor ID
 @investors.route('/<invId>')
 def get_investor(invId):
     cursor = db.get_db().cursor()
@@ -83,10 +84,11 @@ def get_investor(invId):
     return the_response
 
 
+#returns all investments according to Investor ID
 @investors.route('/investments/<invID>', methods=['GET'])
-def get_investments(invId):
+def get_investments(invID):
     cursor = db.get_db().cursor()
-    cursor.execute('select FranchiseId, InvId, InvStatus, Stake from Investments where InvID = {0}'.format(invId))
+    cursor.execute('select FranchiseId, InvId, InvStatus, Stake from Investments where InvID = {0}'.format(invID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
