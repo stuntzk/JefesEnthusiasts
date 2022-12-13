@@ -28,3 +28,5 @@ view average weight times as their location.
 In the Appsmith, there are 2 different data sources to limit the number of connections. The customers
 have their own datasource and the investors/store manager shares the other. They end up connecting to
 the same code in the end.
+
+Link to youtube video with app runthrough: https://www.youtube.com/watch?v=76vQFTTq8lY  
