@@ -6,7 +6,8 @@ from src import db
 
 investors = Blueprint('investors', __name__)
 
-# adds an investment into the database once the investor is logged in
+
+# Adds an investment into the database once the investor is logged in
 @investors.route("/investment", methods=['POST'])
 def add_investment():
     cursor = db.get_db().cursor()
@@ -37,7 +38,7 @@ def get_franchises():
     return the_response
 
 
-#returns all investors according to Investor ID
+# Returns all investors according to Investor ID
 @investors.route('/<invId>')
 def get_investor(invId):
     cursor = db.get_db().cursor()
@@ -53,7 +54,7 @@ def get_investor(invId):
     return the_response
 
 
-#returns all investments according to Investor ID
+# Returns all investments according to Investor ID
 @investors.route('/investments/<invID>', methods=['GET'])
 def get_investments(invID):
     cursor = db.get_db().cursor()
