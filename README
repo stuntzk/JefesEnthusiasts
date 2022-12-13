@@ -1,0 +1,16 @@
+This project is called Jefe's Database and it was created by the Jefe's Enthusiasts
+Group for CS3200 with Dr. Mark Fontenot. The contributors to this project are Kate
+Stuntz, Risha Ranjan, and Claire Mahon.
+
+The purpose of this project is to create a database using MySQL that encompasses
+information that is necessary for the Mexican chain restaurant, El Jefe's Taqueria, to
+run. The project has 3 main users in mind: customers, store managers, and investors.
+Each of these customers has their own directory in this project that allows for them
+to execute the proper functions necessary for their persona. Python was used to write
+the functions for each of the personas and we utilized the Flask API.
+
+In order to properly run this code, you must have Docker downloaded. To start the containers
+use "docker compose build" and then "docker compose up". The port for this project is
+8001 instead of 4000. This project was written to be used in conjunction with our
+Appsmith project. The name of our project is Jefe's and it is under the Jefe's Enthusiasts
+workspace on the CS3200 server.
