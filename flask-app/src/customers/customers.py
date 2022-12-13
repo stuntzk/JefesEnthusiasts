@@ -23,6 +23,68 @@ def get_customer(custID):
     the_response.mimetype = 'application/json'
     return the_response
 
+
+# determines what the highest order so far is
+@customers.route('/maxOrder', methods =['GET'])
+def get_max():
+    cursor = db.get_db().cursor()
+    cursor.execute('select max(OrderId) from Orders')
+    order = cursor.fetchone()[0] + 1
+    return f'{order}'
+
+# adds a new order into the system
+@customers.route('/newOrder', methods =['POST'])
+def new_order():
+    cursor = db.get_db().cursor()
+    cust = request.form['custId']
+    order = request.form['orderId']
+    query = f'INSERT INTO Orders(OrderId, CustomerId) VALUES ({order}, {cust})'
+    cursor.execute(query)
+    db.get_db().commit()
+    return "partial order in system"
+
+# Get all the food types from the database
+@customers.route('/types', methods=['GET'])
+def get_foodTypes():
+    cursor = db.get_db().cursor()
+    cursor.execute('select * from FoodType')
+    column_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(column_headers, row)))
+    return jsonify(json_data)
+
+# returns all the stores with their id and name
+@customers.route('/storeNames', methods=['GET'])
+def get_storeNames():
+    cursor = db.get_db().cursor()
+    cursor.execute('select StoreId, StoreName from Store')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
+# returns the ingredients available at the store asked
+@customers.route('/ingr/<storeID>', methods=['GET'])
+def get_ingredients(storeID):
+    cursor = db.get_db().cursor()
+    cursor.execute('select * from Ingredient where CurrQuantity > 0 and StoreId = {0}'.format(storeID))
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
+
 # allows for the user to add a product into the database through the order form in the appsmith application. during
 # this process, all the product ingredients are also ordered
 @customers.route("/product", methods = ['POST'])
@@ -79,6 +141,7 @@ def db_update_order(store, price, orderId):
     db.get_db().commit()
     return "updated"
 
+
 # determines all the orders a single customer has placed
 @customers.route('/orders/<custId>', methods=['GET'])
 def get_orders(custId):
@@ -115,67 +178,6 @@ def get_order_prod(ord):
 def get_prod_ingr(prodId):
     cursor = db.get_db().cursor()
     cursor.execute('SELECT IngrName, Quantity, Upcharge FROM ProductIngredient pi JOIN Ingredient i on pi.IngredientId = i.IngrId WHERE ProductId = {0}'.format(prodId))
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
-
-# determines what the highest order so far is
-@customers.route('/maxOrder', methods =['GET'])
-def get_max():
-    cursor = db.get_db().cursor()
-    cursor.execute('select max(OrderId) from Orders')
-    order = cursor.fetchone()[0] + 1
-    return f'{order}'
-
-# adds a new order into the system
-@customers.route('/newOrder', methods =['POST'])
-def new_order():
-    cursor = db.get_db().cursor()
-    cust = request.form['custId']
-    order = request.form['orderId']
-    query = f'INSERT INTO Orders(OrderId, CustomerId) VALUES ({order}, {cust})'
-    cursor.execute(query)
-    db.get_db().commit()
-    return "partial order in system"
-
-# Get all the food types from the database
-@customers.route('/types', methods=['GET'])
-def get_foodTypes():
-    cursor = db.get_db().cursor()
-    cursor.execute('select * from FoodType')
-    column_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(column_headers, row)))
-    return jsonify(json_data)
-
-# returns all the stores with their id and name
-@customers.route('/storeNames', methods=['GET'])
-def get_storeNames():
-    cursor = db.get_db().cursor()
-    cursor.execute('select StoreId, StoreName from Store')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
-
-# returns the ingredients available at the store asked
-@customers.route('/ingr/<storeID>', methods=['GET'])
-def get_ingredients(storeID):
-    cursor = db.get_db().cursor()
-    cursor.execute('select * from Ingredient where CurrQuantity > 0 and StoreId = {0}'.format(storeID))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
