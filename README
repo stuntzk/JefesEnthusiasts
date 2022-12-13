@@ -14,3 +14,13 @@ use "docker compose build" and then "docker compose up". The port for this proje
 8001 instead of 4000. This project was written to be used in conjunction with our
 Appsmith project. The name of our project is Jefe's and it is under the Jefe's Enthusiasts
 workspace on the CS3200 server.
+
+In the Appsmith, when you deploy the app, you will initially be brought to the homepage. From
+the homepage, you are given the option of which persona you want to be. Once you click that, you
+are brought to login for that persona. An id that will work for the customer login is: 12355. An id
+that will work for the store manager is: 100. An id that will work for the investor is: 103. If
+the id does not exist in the system, you will be notified as such. Once you are logged in, you will
+have different options for each persona. With the customer you can view ingredients the different
+stores, check for stores in a given zip code, view your previous orders, and place new orders.
+If you are an investor, you can view past investments and make investments. Store managers can
+view average weight times as their location.
