@@ -54,7 +54,7 @@ def add_investment():
 @investors.route('/franchises',methods=['GET'])
 def get_franchises():
     cursor = db.get_db().cursor()
-    query='select franchise_id as value from franchise'
+    query='select FranchiseId, FranchiseName from Franchise'
     cursor.execute(query)
     row_headers= [x[0] for x in cursor.description]
     json_data=[]

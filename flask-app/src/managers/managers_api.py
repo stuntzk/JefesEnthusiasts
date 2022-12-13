@@ -52,7 +52,7 @@ def get_all_times():
 @managers.route('/<manID>')
 def get_manager(manID):
     cursor = db.get_db().cursor()
-    cursor.execute('select * from Employee where EmpId = ManagerId and ManagerId = {0}'.format(manID))
+    cursor.execute(f'select * from Employee where EmpId = ManagerId and ManagerId = {manID}')
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
