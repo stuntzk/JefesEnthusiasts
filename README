@@ -24,3 +24,7 @@ have different options for each persona. With the customer you can view ingredie
 stores, check for stores in a given zip code, view your previous orders, and place new orders.
 If you are an investor, you can view past investments and make investments. Store managers can
 view average weight times as their location.
+
+In the Appsmith, there are 2 different data sources to limit the number of connections. The customers
+have their own datasource and the investors/store manager shares the other. They end up connecting to
+the same code in the end.
