@@ -6,39 +6,6 @@ from src import db
 
 investors = Blueprint('investors', __name__)
 
-
-# returns all the investors with their id and name
-@investors.route('/all', methods=['GET'])
-def get_InvestorNames():
-    cursor = db.get_db().cursor()
-    cursor.execute('select InvId, FirstName from Investor')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
-
-
-# Get all investors from the DB
-@investors.route('/allinvestors', methods=['GET'])
-def get_investors():
-    cursor = db.get_db().cursor()
-    cursor.execute('select * from Investor')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
-
-
 # adds an investment into the database once the investor is logged in
 @investors.route("/investment", methods=['POST'])
 def add_investment():
