@@ -6,18 +6,20 @@ from src import db
 
 investors = Blueprint('investors', __name__)
 
-
-# Adds an investment into the database once the investor is logged in
-@investors.route("/investment", methods=['POST'])
-def add_investment():
+# Returns all investors according to Investor ID
+@investors.route('/<invId>')
+def get_investor(invId):
     cursor = db.get_db().cursor()
-    stake = request.form['stake']
-    franchiseId = request.form['franchiseid']
-    invId = request.form['invid']
-    query = f'INSERT INTO Investments(FranchiseId, InvId, InvStatus, Stake) values ({franchiseId}, {invId}, \'new\', {stake}) '
-    cursor.execute(query)
-    db.get_db().commit()
-    return "Success!"
+    cursor.execute(f'select * from Investor where InvID = {invId}')
+    row_headers = [x[0] for x in cursor.description]
+    json_data = []
+    theData = cursor.fetchall()
+    for row in theData:
+        json_data.append(dict(zip(row_headers, row)))
+    the_response = make_response(jsonify(json_data))
+    the_response.status_code = 200
+    the_response.mimetype = 'application/json'
+    return the_response
 
 
 # Returns all the franchises by franchiseID
@@ -37,22 +39,17 @@ def get_franchises():
     the_response.mimetype = 'application/json'
     return the_response
 
-
-# Returns all investors according to Investor ID
-@investors.route('/<invId>')
-def get_investor(invId):
+# Adds an investment into the database once the investor is logged in
+@investors.route("/investment", methods=['POST'])
+def add_investment():
     cursor = db.get_db().cursor()
-    cursor.execute(f'select * from Investor where InvID = {invId}')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
-
+    stake = request.form['stake']
+    franchiseId = request.form['franchiseid']
+    invId = request.form['invid']
+    query = f'INSERT INTO Investments(FranchiseId, InvId, InvStatus, Stake) values ({franchiseId}, {invId}, \'new\', {stake}) '
+    cursor.execute(query)
+    db.get_db().commit()
+    return "Success!"
 
 # Returns all investments according to Investor ID
 @investors.route('/investments/<invID>', methods=['GET'])
