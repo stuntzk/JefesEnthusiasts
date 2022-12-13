@@ -5,7 +5,7 @@ from datetime import timedelta
 
 managers = Blueprint('managers', __name__)
 
-# route rused when logging into the manager site
+# route used when logging into the manager site
 @managers.route('/<manID>')
 def get_manager(manID):
     cursor = db.get_db().cursor()
