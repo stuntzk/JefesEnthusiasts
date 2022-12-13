@@ -7,20 +7,6 @@ from src import db
 
 customers = Blueprint('customers', __name__)
 
-# get all customers from the database
-@customers.route('/all', methods=['GET'])
-def get_customers():
-    cursor = db.get_db().cursor()
-    cursor.execute('select * from Customer')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
 
 # Get customer details for customer with particular userID
 @customers.route('/<custID>')
@@ -108,20 +94,6 @@ def get_orders(custId):
     the_response.mimetype = 'application/json'
     return the_response
 
-# creates a list of all the products
-@customers.route('/product/all', methods=['GET'])
-def get_prod():
-    cursor = db.get_db().cursor()
-    cursor.execute('select ProductId from Product')
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
 
 # creates a list of all the products with the current orderId
 @customers.route('/product/<ord>', methods=['GET'])
@@ -214,20 +186,6 @@ def get_ingredients(storeID):
     the_response.mimetype = 'application/json'
     return the_response
 
-# returns the store name with the specific storeID
-@customers.route('/home/<storeID>', methods=['GET'])
-def get_store(storeID):
-    cursor = db.get_db().cursor()
-    cursor.execute('select StoreName from Store where StoreId = {0}'.format(storeID))
-    row_headers = [x[0] for x in cursor.description]
-    json_data = []
-    theData = cursor.fetchall()
-    for row in theData:
-        json_data.append(dict(zip(row_headers, row)))
-    the_response = make_response(jsonify(json_data))
-    the_response.status_code = 200
-    the_response.mimetype = 'application/json'
-    return the_response
 
 # returns the stores that are in this zip code
 @customers.route('/zip/<zipCode>', methods=['GET'])
