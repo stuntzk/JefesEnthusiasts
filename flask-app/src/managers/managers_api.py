@@ -25,7 +25,7 @@ def get_all_managers():
 def get_all_times():
     cursor = db.get_db().cursor()
     query = '''
-        select hour as x, avg(totalTime) as y
+        select hour as x, avg(totalTime)/60 as y
         from (select OrderDate, EXTRACT(HOUR from TimeOrdered) as hour, totalTime
         from (SELECT OrderDate, TimeOrdered, TIME_TO_SEC(TimeToMake) as totalTime
         FROM Orders) as second) as third
