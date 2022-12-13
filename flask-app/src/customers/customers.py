@@ -69,7 +69,7 @@ def add_product():
         query = f'INSERT INTO ProductIngredient(ProductId, IngredientId, Quantity) VALUES ({prod}, {x}, 1)'
         cursor.execute(query)
         db.get_db().commit()
-    return f'{price}'
+    return arr
 
 # completes the proper steps after the user places submit on the order
 # (updates the order to have the proper information)
@@ -142,7 +142,7 @@ def get_order_prod(ord):
 @customers.route('/product/ingr/<prodId>', methods=['GET'])
 def get_prod_ingr(prodId):
     cursor = db.get_db().cursor()
-    cursor.execute('SELECT IngrName, Quantity, Upcharge FROM Ingredient NATURAL JOIN ProductIngredient WHERE ProductId = {0}'.format(prodId))
+    cursor.execute('SELECT IngrName, Quantity, Upcharge FROM ProductIngredient pi JOIN Ingredient i on pi.IngredientId = i.IngrId WHERE ProductId = {0}'.format(prodId))
     row_headers = [x[0] for x in cursor.description]
     json_data = []
     theData = cursor.fetchall()
